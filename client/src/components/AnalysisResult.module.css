@@ -88,7 +88,7 @@
 
 /* ── 총점 카드 ── */
 .scoreCard {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
   border-radius: var(--radius-lg);
   padding: 40px 32px;
   text-align: center;

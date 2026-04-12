@@ -1,0 +1,30 @@
+# Environment variables (API keys)
+.env
+*.env
+**/.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules
+**/node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+.vercel
+.env*.local
+
+# Claude Code
+.claude/

@@ -1,0 +1,113 @@
+.card {
+  border: 1px solid;
+  border-radius: var(--radius);
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 10px;
+  transition: box-shadow 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+.card:last-child { margin-bottom: 0; }
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* 왼쪽: 점수·라벨·등급·바 */
+.leftCol {
+  flex-shrink: 0;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leftTop {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.grade {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  margin-left: auto;
+}
+
+.bar {
+  width: 100%;
+  height: 3px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.75;
+}
+
+/* 오른쪽: 피드백 */
+.rightCol {
+  flex: 1;
+  min-width: 0;
+}
+
+.feedback {
+  font-size: 13px;
+  color: var(--gray-500);
+  line-height: 1.6;
+}
+
+/* ── 모바일: 1열 구조로 전환 ── */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .leftCol {
+    width: 100%;
+  }
+
+  .rightCol {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding-top: 12px;
+  }
+}

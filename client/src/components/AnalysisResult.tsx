@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ImageAnalysisResult } from "../lib/analyzer";
 import { analyzeImagePrompt } from "../lib/analyzer";
+import type { GeneratedImage } from "../lib/imageGenerator";
+import { generateImageFromPrompt } from "../lib/imageGenerator";
 import ScoreBar from "./ScoreBar";
 import s from "./AnalysisResult.module.css";
 
@@ -37,6 +39,13 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedNeg, setCopiedNeg] = useState(false);
+  const [generationPrompt, setGenerationPrompt] = useState(result.improved_prompt);
+  const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
+  const [originalImage, setOriginalImage] = useState<GeneratedImage | null>(null);
+  const [improvedImage, setImprovedImage] = useState<GeneratedImage | null>(null);
+  const [imageLoading, setImageLoading] = useState<"single" | "compare" | null>(null);
+  const [imageError, setImageError] = useState("");
+  const [previewImage, setPreviewImage] = useState<{ image: GeneratedImage; title: string } | null>(null);
 
   async function handlePractice() {
     if (!practice.trim()) return;
@@ -59,6 +68,51 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
     navigator.clipboard.writeText(result.negative_prompt);
     setCopiedNeg(true);
     setTimeout(() => setCopiedNeg(false), 2000);
+  }
+
+  async function handleGenerateImage() {
+    if (!generationPrompt.trim()) return;
+    setImageLoading("single");
+    setImageError("");
+    try {
+      const image = await generateImageFromPrompt(generationPrompt);
+      setGeneratedImage(image);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "이미지 생성 중 오류가 발생했어요.");
+    } finally {
+      setImageLoading(null);
+    }
+  }
+
+  async function handleCompareImages() {
+    setImageLoading("compare");
+    setImageError("");
+    try {
+      const [before, after] = await Promise.all([
+        generateImageFromPrompt(original),
+        generateImageFromPrompt(result.improved_prompt),
+      ]);
+      setOriginalImage(before);
+      setImprovedImage(after);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "비교 이미지 생성 중 오류가 발생했어요.");
+    } finally {
+      setImageLoading(null);
+    }
+  }
+
+  function downloadImage(image: GeneratedImage, filename: string) {
+    const link = document.createElement("a");
+    link.href = image.imageUrl;
+    link.download = filename;
+    link.click();
+  }
+
+  function setImageAspectRatio(e: React.SyntheticEvent<HTMLImageElement>) {
+    const img = e.currentTarget;
+    if (img.naturalWidth && img.naturalHeight) {
+      img.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+    }
   }
 
   const diff = practiceResult ? practiceResult.total - result.total : 0;
@@ -127,10 +181,10 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
           </div>
           <div className={s.improvedBox}>{result.improved_prompt}</div>
 
-          {/* 한국어 번역 */}
+          {/* 영문 참고안 */}
           <div className={s.sectionMeta} style={{ marginTop: "16px" }}>
             <iconify-icon icon="solar:translation-bold" width="14" height="14" style={{ color: "var(--gray-400)" }} />
-            <span className={s.sectionLabel}>한국어 번역</span>
+            <span className={s.sectionLabel}>영문 참고안</span>
           </div>
           <div className={s.improvedBoxKo}>{result.improved_prompt_ko}</div>
 
@@ -166,6 +220,143 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* 이미지 생성 실험실 */}
+        <div className={s.card}>
+          <div className={s.sectionMeta}>
+            <iconify-icon icon="solar:gallery-wide-bold" width="14" height="14" style={{ color: "var(--primary)" }} />
+            <span className={s.sectionLabel} data-accent>이미지로 확인하기</span>
+          </div>
+          <p className={s.imageLabDesc}>
+            한국어 개선 프롬프트가 실제 이미지 결과를 어떻게 바꾸는지 바로 확인해보세요.
+          </p>
+
+          <div className={s.imagePromptPanel}>
+            <div className={s.imagePromptHeader}>
+              <span>생성에 사용할 프롬프트</span>
+              <button className={s.promptResetBtn} onClick={() => setGenerationPrompt(result.improved_prompt)}>
+                개선안으로 되돌리기
+              </button>
+            </div>
+            <textarea
+              className={s.imagePromptTextarea}
+              value={generationPrompt}
+              onChange={(e) => setGenerationPrompt(e.target.value)}
+              rows={4}
+            />
+          </div>
+
+          <div className={s.imageActionGrid}>
+            <button
+              className={`${s.imageActionBtn} ${s.imageActionBtnPrimary}`}
+              onClick={handleGenerateImage}
+              disabled={imageLoading !== null || !generationPrompt.trim()}
+            >
+              {imageLoading === "single" ? (
+                <span className={s.loadingRow}><span className={s.spinner} />이미지 생성 중...</span>
+              ) : (
+                <span className={s.loadingRow}>
+                  <iconify-icon icon="solar:magic-stick-3-bold" width="15" height="15" />
+                  이미지 생성하기
+                </span>
+              )}
+            </button>
+            <button
+              className={s.imageActionBtn}
+              onClick={handleCompareImages}
+              disabled={imageLoading !== null}
+            >
+              {imageLoading === "compare" ? (
+                <span className={s.loadingRow}><span className={s.spinner} />비교 이미지 생성 중...</span>
+              ) : (
+                <span className={s.loadingRow}>
+                  <iconify-icon icon="solar:slider-horizontal-bold" width="15" height="15" />
+                  원본과 개선안 비교
+                </span>
+              )}
+            </button>
+          </div>
+
+          {imageError && <div className={s.imageError}>{imageError}</div>}
+
+          {generatedImage && (
+            <div className={s.generatedImagePanel}>
+              <div className={s.generatedImageHeader}>
+                <div>
+                  <span className={s.generatedImageLabel}>생성 결과</span>
+                  <span className={s.generatedImageModel}>{generatedImage.model}</span>
+                </div>
+                <button
+                  className={s.downloadBtn}
+                  onClick={() => downloadImage(generatedImage, "think-prompt-generated.png")}
+                >
+                  <iconify-icon icon="solar:download-bold" width="14" height="14" />
+                  다운로드
+                </button>
+              </div>
+              <button
+                className={s.imagePreviewBtn}
+                onClick={() => setPreviewImage({ image: generatedImage, title: "생성 결과" })}
+              >
+                <img
+                  className={s.generatedImage}
+                  src={generatedImage.imageUrl}
+                  alt="개선된 프롬프트로 생성한 이미지"
+                  onLoad={setImageAspectRatio}
+                />
+              </button>
+            </div>
+          )}
+
+          {(originalImage || improvedImage) && (
+            <div className={s.compareImages}>
+              <div className={s.compareImageCard}>
+                <div className={s.compareImageHeader}>
+                  <span>처음 프롬프트</span>
+                  {originalImage && (
+                    <button onClick={() => downloadImage(originalImage, "think-prompt-original.png")}>다운로드</button>
+                  )}
+                </div>
+                {originalImage ? (
+                  <button
+                    className={s.imagePreviewBtn}
+                    onClick={() => setPreviewImage({ image: originalImage, title: "처음 프롬프트" })}
+                  >
+                    <img
+                      src={originalImage.imageUrl}
+                      alt="처음 프롬프트로 생성한 이미지"
+                      onLoad={setImageAspectRatio}
+                    />
+                  </button>
+                ) : (
+                  <div className={s.imagePlaceholder}>생성 대기</div>
+                )}
+              </div>
+              <div className={s.compareImageCard} data-accent>
+                <div className={s.compareImageHeader}>
+                  <span>개선된 프롬프트</span>
+                  {improvedImage && (
+                    <button onClick={() => downloadImage(improvedImage, "think-prompt-improved.png")}>다운로드</button>
+                  )}
+                </div>
+                {improvedImage ? (
+                  <button
+                    className={s.imagePreviewBtn}
+                    onClick={() => setPreviewImage({ image: improvedImage, title: "개선된 프롬프트" })}
+                  >
+                    <img
+                      src={improvedImage.imageUrl}
+                      alt="개선된 프롬프트로 생성한 이미지"
+                      onLoad={setImageAspectRatio}
+                    />
+                  </button>
+                ) : (
+                  <div className={s.imagePlaceholder}>생성 대기</div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 팁 */}
@@ -243,6 +434,29 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
         </div>
 
       </div>
+
+      {previewImage && (
+        <div className={s.previewOverlay} role="dialog" aria-modal="true" onClick={() => setPreviewImage(null)}>
+          <div className={s.previewDialog} onClick={(e) => e.stopPropagation()}>
+            <div className={s.previewHeader}>
+              <div>
+                <span className={s.previewTitle}>{previewImage.title}</span>
+                <span className={s.previewModel}>{previewImage.image.model}</span>
+              </div>
+              <div className={s.previewActions}>
+                <button onClick={() => downloadImage(previewImage.image, "think-prompt-preview.png")}>
+                  <iconify-icon icon="solar:download-bold" width="14" height="14" />
+                  다운로드
+                </button>
+                <button onClick={() => setPreviewImage(null)} aria-label="이미지 크게 보기 닫기">
+                  <iconify-icon icon="solar:close-circle-bold" width="18" height="18" />
+                </button>
+              </div>
+            </div>
+            <img className={s.previewImage} src={previewImage.image.imageUrl} alt={`${previewImage.title} 크게 보기`} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

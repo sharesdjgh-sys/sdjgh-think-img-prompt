@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ImageAnalysisResult } from "./lib/analyzer";
 import { analyzeImagePrompt } from "./lib/analyzer";
+import { getPromptLimitInfo } from "./lib/promptLimits";
 import AnalysisResult from "./components/AnalysisResult";
 import Tutorial from "./components/Tutorial";
 import styles from "./App.module.css";
@@ -30,8 +31,8 @@ const HOW_TO = [
   },
   {
     step: "03",
-    title: "영문 개선안 + 번역 확인",
-    desc: "개선된 영문 프롬프트와 한국어 번역, 추천 부정 프롬프트를 함께 확인하세요.",
+    title: "한글 개선안 확인",
+    desc: "개선된 한국어 프롬프트와 영문 참고안, 추천 부정 프롬프트를 함께 확인하세요.",
     color: "#10b981",
   },
   {
@@ -47,6 +48,11 @@ export default function App() {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState<ImageAnalysisResult | null>(null);
   const [error, setError] = useState("");
+  const promptLimit = getPromptLimitInfo(prompt);
+  const promptLimitMessage =
+    promptLimit.status === "over"
+      ? `${promptLimit.remainingChars * -1}자 초과 - 줄이면 분석이 더 안정적이에요`
+      : `${promptLimit.remainingChars}자 더 입력 가능`;
 
   async function handleAnalyze() {
     if (!prompt.trim()) return;
@@ -109,7 +115,12 @@ export default function App() {
         {/* 오른쪽: 입력 + 버튼 + 사용 방법 */}
         <div className={styles.right}>
           <div className={`${styles.card} ${step === "loading" ? styles.cardLoading : ""}`}>
-            <label className={styles.label}>프롬프트 입력</label>
+            <div className={styles.inputHeader}>
+              <label className={styles.label}>프롬프트 입력</label>
+              <span className={`${styles.limitBadge} ${styles[`limitBadge_${promptLimit.status}`]}`}>
+                권장 최대 {promptLimit.recommendedMaxChars.toLocaleString()}자
+              </span>
+            </div>
             <textarea
               className={styles.textarea}
               value={prompt}
@@ -119,7 +130,12 @@ export default function App() {
               disabled={step === "loading"}
               rows={5}
             />
-            <p className={styles.hint}>Ctrl+Enter로 빠르게 분석할 수 있어요</p>
+            <div className={styles.inputMeta}>
+              <span className={`${styles.limitText} ${styles[`limitText_${promptLimit.status}`]}`}>
+                {promptLimit.currentChars.toLocaleString()} / {promptLimit.recommendedMaxChars.toLocaleString()}자 · {promptLimitMessage}
+              </span>
+              <span className={styles.hint}>Ctrl+Enter로 빠르게 분석할 수 있어요</span>
+            </div>
             {error && <p className={styles.error}>{error}</p>}
           </div>
 

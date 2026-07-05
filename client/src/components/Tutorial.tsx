@@ -73,8 +73,8 @@ const FEATURES = [
   },
   {
     icon: "solar:magic-stick-3-bold",
-    title: "영문 개선안 + 한국어 번역 제안",
-    desc: "개선된 영문 프롬프트와 한국어 번역, 추천 부정 프롬프트를 함께 제시해드려요.",
+    title: "한글 개선안 + 영문 참고안 제안",
+    desc: "학생이 이해하기 쉬운 한국어 개선 프롬프트와 영문 참고안, 추천 부정 프롬프트를 함께 제시해드려요.",
   },
   {
     icon: "solar:pen-new-round-bold",
@@ -397,11 +397,11 @@ export default function Tutorial({ onStart }: Props) {
               <h2 className={s.title}>이제 직접<br />해봐요</h2>
               <p className={s.desc}>
                 사용하던 이미지 프롬프트를 그대로 입력해보세요.<br />
-                5가지 기준으로 분석하고 개선된 프롬프트와 번역을 제안해드려요.
+                5가지 기준으로 분석하고 한국어 개선 프롬프트와 영문 참고안을 제안해드려요.
               </p>
 
               <div className={s.flowList}>
-                {["프롬프트 입력", "5가지 분석", "영문+번역+부정 확인", "직접 다시 써보기"].map((t, i) => (
+                {["프롬프트 입력", "5가지 분석", "한글 개선안 확인", "직접 다시 써보기"].map((t, i) => (
                   <div key={t} className={s.flowItem}>
                     <span className={s.flowNum}>{i + 1}</span>
                     <span className={s.flowText}>{t}</span>

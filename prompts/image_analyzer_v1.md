@@ -55,9 +55,9 @@
     "lighting": "<이 항목의 점수 이유와 개선 방향을 2문장으로>",
     "negative": "<이 항목의 점수 이유와 개선 방향을 2문장으로>"
   },
-  "improved_prompt": "<원본의 의도를 살리면서 5가지 기준을 반영한 개선된 영문 프롬프트>",
-  "improved_prompt_ko": "<개선된 프롬프트의 한국어 번역>",
-  "negative_prompt": "<추천 부정 프롬프트 (영문)>",
+  "improved_prompt": "<원본의 의도를 살리면서 5가지 기준을 반영한 개선된 한국어 프롬프트>",
+  "improved_prompt_ko": "<이미지 생성 AI에서 참고할 수 있는 영문 프롬프트. 한국어 개선안을 자연스럽게 영어로 옮긴 버전>",
+  "negative_prompt": "<추천 부정 프롬프트. 학생이 이해하기 쉬운 한국어 중심으로 작성하고, 필요한 핵심 키워드는 괄호 안에 영어로 함께 표기>",
   "changes": [
     { "what": "<변경한 내용>", "why": "<변경한 이유>" },
     ...
@@ -66,7 +66,9 @@
 }
 
 ## 주의사항
-- 이미지 프롬프트는 한국어로 입력해도 영문 개선안을 제공하세요 (이미지 AI는 영문이 더 효과적).
+- 개선된 프롬프트는 반드시 한국어로 작성하세요. 학생이 읽고 배울 수 있는 자연스러운 문장이어야 합니다.
+- improved_prompt_ko 필드는 화면에서 '영문 참고안'으로 보여줄 값입니다. 한국어 개선안을 이미지 생성 AI에 넣기 좋게 자연스러운 영어로 옮기세요.
+- 부정 프롬프트도 한국어 중심으로 작성하되, 이미지 모델에 도움이 되는 핵심 영어 키워드는 괄호 안에 함께 적어도 됩니다.
 - 부정 프롬프트를 모르는 학생에게는 먼저 개념을 설명해주세요.
 - 학생의 창의적 의도를 존중하고, 현실적으로 구현 가능한 방향으로 개선하세요.
 ```
@@ -80,11 +82,11 @@
 
 **예상 개선 프롬프트:**
 ```
-a cute fluffy white cat sitting on a windowsill, 
-soft watercolor style, warm afternoon sunlight, 
-close-up shot, pastel colors, high quality illustration
+포근한 털을 가진 귀여운 흰 고양이가 창가에 앉아 있는 장면을 그려줘.
+따뜻한 오후 햇살이 창문으로 들어오고, 파스텔 색감의 부드러운 수채화 일러스트 스타일로 표현해줘.
+고양이는 클로즈업 구도로 보이게 하고, 전체적으로 따뜻하고 평화로운 분위기였으면 좋겠어.
 
-Negative: blurry, ugly, deformed, low quality
+부정 프롬프트: 흐릿함(blurry), 어색한 얼굴, 변형된 몸, 낮은 품질(low quality)
 ```
 
 ---
@@ -94,10 +96,9 @@ Negative: blurry, ugly, deformed, low quality
 
 **예상 개선 프롬프트:**
 ```
-a teenage girl standing in an enchanted forest, 
-anime style illustration, soft dappled sunlight filtering through trees,
-medium shot, green and gold color palette, 
-detailed eyes, flowing hair, masterpiece, best quality
+신비로운 숲속에 서 있는 소녀를 애니메이션 일러스트 스타일로 그려줘.
+나뭇잎 사이로 부드러운 햇살이 들어오고, 초록색과 금빛이 섞인 따뜻한 색감이면 좋겠어.
+소녀는 중간 거리 구도로 보이게 하고, 풍성한 머리카락과 또렷한 눈, 마법 같은 분위기를 자세히 표현해줘.
 
-Negative: blurry, bad anatomy, extra limbs, low quality, watermark
+부정 프롬프트: 흐릿함(blurry), 어색한 신체 구조(bad anatomy), 여분의 팔다리(extra limbs), 낮은 품질(low quality), 워터마크(watermark)
 ```

@@ -2,7 +2,7 @@
 .page {
   min-height: 100dvh;
   background: var(--gray-50);
-  padding: 44px 16px 100px;
+  padding: 48px 32px 100px;
   position: relative;
   overflow: hidden;
 }
@@ -21,11 +21,84 @@
 .container {
   position: relative;
   z-index: 1;
-  max-width: 680px;
+  max-width: 1080px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.summaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── 실험실(STEP 2)·연습(STEP 3) 내부 2열 ── */
+.labGrid,
+.practiceGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.labControls {
+  min-width: 0;
+}
+
+.labResults {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.practiceLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.practiceLeft .practiceTextarea {
+  flex: 1;
+}
+
+.practiceRight {
+  display: flex;
+  flex-direction: column;
+}
+
+.practiceRight .compareSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.emptyHint {
+  flex: 1;
+  min-height: 240px;
+  border: 1.5px dashed var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--gray-400);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.7;
 }
 
 /* ── 뒤로 버튼 ── */
@@ -86,26 +159,68 @@
   letter-spacing: 0.6px;
 }
 
+/* ── 스텝 카드 헤더 ── */
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--gray-900);
+  line-height: 1.3;
+}
+
+.cardDesc {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gray-500);
+  line-height: 1.6;
+}
+
+.stepChip {
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(124,58,237,0.3);
+}
+
 /* ── 총점 카드 ── */
 .scoreCard {
   background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
   border-radius: var(--radius-lg);
-  padding: 40px 32px;
-  text-align: center;
+  padding: 26px 28px;
   border: none;
   box-shadow: 0 12px 36px rgba(124,58,237,0.3);
   animation: fadeUp 0.3s var(--ease-out) both;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+}
+
+.scoreTopRow {
+  display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.scoreCardInner {
+.scoreNumberMeta {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .scoreBadge {
@@ -113,32 +228,32 @@
   font-weight: 800;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.24);
   padding: 4px 14px;
   border-radius: 999px;
-  margin-bottom: 8px;
 }
 
 .scoreNumber {
-  font-size: 88px;
+  font-size: 62px;
   font-weight: 800;
-  letter-spacing: -5px;
+  letter-spacing: -3px;
   line-height: 1;
   color: #ffffff;
 }
 
 .scoreMax {
-  font-size: 18px;
-  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  padding-left: 4px;
 }
 
 .overallComment {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.75;
-  color: rgba(255,255,255,0.85);
-  max-width: 420px;
+  color: rgba(255,255,255,0.9);
 }
 
 /* ── 원본 프롬프트 ── */
@@ -249,28 +364,28 @@
 .changeItem {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 14px 16px;
-  background: var(--gray-200);
+  padding: 13px 15px;
+  background: var(--gray-50);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-300);
+  border: 1px solid var(--gray-200);
   transition: border-color 0.15s var(--ease-out), box-shadow 0.15s;
 }
 
 .changeItem:hover {
-  border-color: var(--primary);
+  border-color: rgba(124,58,237,0.35);
   box-shadow: 0 2px 10px rgba(124,58,237,0.08);
 }
 
 .changeNum {
-  width: 24px;
-  height: 24px;
-  background: var(--primary);
-  color: #fff;
-  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11px;
   font-weight: 800;
-  border-radius: 7px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,13 +413,6 @@
 }
 
 /* ── 이미지 생성 실험실 ── */
-.imageLabDesc {
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: var(--gray-500);
-  line-height: 1.7;
-}
-
 .imagePromptPanel {
   border: 1px solid var(--gray-300);
   background: var(--gray-50);
@@ -415,114 +523,83 @@
   cursor: default;
 }
 
-.recommendationSummary {
-  margin-bottom: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #fde68a;
-  background: #fffbeb;
-  color: #92400e;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.55;
-}
-
-.recommendationSummaryDone {
-  border-color: #bbf7d0;
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.promptHelperGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.promptHelperGroup {
-  display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 10px;
-  border: 1px solid var(--gray-300);
-  border-radius: 10px;
-  background: var(--gray-50);
-}
-
-.promptHelperGroupRecommended {
-  border-color: #fcd34d;
-  background: #fffbeb;
-}
-
-.promptHelperHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.promptHelperHeader > div {
+/* ── 보조 도구 탭 ── */
+.helperTabs {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-200);
 }
 
-.promptHelperHeader span {
-  color: var(--gray-800);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.promptHelperHeader strong {
-  padding: 2px 6px;
+.helperTab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 7px 13px;
   border-radius: 999px;
-  background: #fef3c7;
-  color: #92400e;
-  font-size: 9px;
-  font-weight: 900;
-  line-height: 1.2;
-}
-
-.promptHelperHeader strong[data-done] {
-  background: #dcfce7;
-  color: #047857;
-}
-
-.promptHelperHeader small {
-  color: var(--gray-400);
-  font-size: 10px;
+  border: 1px solid var(--gray-300);
+  background: #fff;
+  color: var(--gray-500);
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.4;
+  transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
+}
+
+.helperTab:hover:not(.helperTabActive) {
+  border-color: rgba(124,58,237,0.3);
+  color: var(--primary);
+}
+
+.helperTabActive {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.helperTabDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245,158,11,0.25);
+}
+
+.helperGroupDesc {
+  margin-bottom: 10px;
+  color: var(--gray-400);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .promptHelperChips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 7px;
 }
 
 .promptHelperChip {
-  min-height: 28px;
-  padding: 5px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid var(--gray-300);
   background: #fff;
-  color: var(--gray-600);
-  font-size: 11px;
-  font-weight: 800;
+  color: var(--gray-700);
+  font-size: 12.5px;
+  font-weight: 700;
   line-height: 1.3;
   transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
 }
 
 .promptHelperChip span {
-  margin-right: 4px;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: rgba(245,158,11,0.14);
-  color: #92400e;
-  font-size: 9px;
-  font-weight: 900;
+  font-weight: 800;
+  color: var(--gray-400);
 }
 
 .promptHelperChip:hover:not(:disabled) {
@@ -531,10 +608,18 @@
   color: var(--primary);
 }
 
+.promptHelperChip:hover:not(:disabled) span {
+  color: var(--primary);
+}
+
 .promptHelperChipRecommended {
-  border-color: #f59e0b;
+  border-color: rgba(245,158,11,0.55);
   background: #fffbeb;
   color: #92400e;
+}
+
+.promptHelperChipRecommended span {
+  color: #d97706;
 }
 
 .promptHelperChipApplied {
@@ -545,8 +630,7 @@
 }
 
 .promptHelperChipApplied span {
-  background: #dcfce7;
-  color: #047857;
+  color: #059669;
 }
 
 .imageActionGrid {
@@ -559,17 +643,23 @@
   min-height: 48px;
   padding: 13px 16px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-300);
-  background: var(--gray-800);
-  color: #fff;
+  border: 1.5px solid var(--gray-300);
+  background: #fff;
+  color: var(--gray-700);
   font-size: 13px;
   font-weight: 800;
-  transition: transform 0.2s var(--ease-out), background 0.2s var(--ease-out), box-shadow 0.2s;
+  transition: transform 0.2s var(--ease-out), background 0.2s var(--ease-out), border-color 0.2s var(--ease-out), color 0.2s, box-shadow 0.2s;
+}
+
+.imageActionBtn:hover:not(:disabled):not(.imageActionBtnPrimary) {
+  border-color: rgba(124,58,237,0.4);
+  color: var(--primary);
 }
 
 .imageActionBtnPrimary {
   background: var(--primary);
   border-color: var(--primary);
+  color: #fff;
 }
 
 .imageActionBtn:hover:not(:disabled) {
@@ -601,9 +691,10 @@
 }
 
 .generatedImagePanel {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--gray-300);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  padding: 12px;
 }
 
 .generatedImageHeader {
@@ -689,7 +780,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 16px;
 }
 
 .compareImageCard {
@@ -852,13 +942,6 @@
 }
 
 /* ── 연습 구역 ── */
-.practiceDesc {
-  font-size: 14px;
-  color: var(--gray-500);
-  margin-bottom: 16px;
-  line-height: 1.7;
-}
-
 .practiceTextarea {
   width: 100%;
   padding: 14px 16px;
@@ -896,14 +979,15 @@
 }
 
 .practiceBtnActive {
-  background: var(--gray-800);
+  background: var(--primary);
   color: #fff;
   box-shadow: var(--shadow-sm);
 }
 
 .practiceBtnActive:hover {
-  background: var(--gray-900);
+  background: var(--primary-dark);
   transform: scale(1.01);
+  box-shadow: 0 8px 28px rgba(124,58,237,0.3);
 }
 
 .practiceBtnDisabled {
@@ -914,9 +998,6 @@
 
 /* ── 점수 비교 ── */
 .compareSection {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--gray-300);
   animation: fadeUp 0.25s var(--ease-out) both;
 }
 
@@ -1021,7 +1102,22 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .page {
+    padding: 32px 16px 80px;
+  }
+
+  .resultGrid,
+  .labGrid,
+  .practiceGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .emptyHint {
+    min-height: 150px;
+  }
+
   .imageActionGrid,
   .compareImages {
     grid-template-columns: 1fr;
@@ -1034,10 +1130,6 @@
   .promptHelperIntro {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .promptHelperGroup {
-    grid-template-columns: 1fr;
   }
 
   .previewOverlay {

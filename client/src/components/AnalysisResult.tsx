@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ImageAnalysisResult } from "../lib/analyzer";
 import { analyzeImagePrompt } from "../lib/analyzer";
+import { CRITERIA, CRITERION_KEYS, isCriterionKey } from "../lib/criteria";
 import type { GeneratedImage } from "../lib/imageGenerator";
 import { generateImageFromPrompt } from "../lib/imageGenerator";
 import ScoreBar from "./ScoreBar";
@@ -11,14 +12,6 @@ interface Props {
   result: ImageAnalysisResult;
   onReset: () => void;
 }
-
-const SCORE_LABELS: Record<keyof ImageAnalysisResult["scores"], string> = {
-  subject: "주제 명확성",
-  style: "스타일",
-  composition: "구도와 시점",
-  lighting: "조명과 품질",
-  negative: "부정 프롬프트",
-};
 
 type PromptHelperItem = {
   label: string;
@@ -254,6 +247,9 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
   }
 
   const diff = practiceResult ? practiceResult.total - result.total : 0;
+  const promptParts = result.prompt_parts?.filter((p) => p.text) ?? [];
+  const hasAnatomy = promptParts.length > 0;
+  const legendKeys = CRITERION_KEYS.filter((k) => promptParts.some((p) => p.criterion === k));
   const recommendedGroups = PROMPT_HELPERS.map((group) => ({
     ...group,
     applied: isHelperGroupApplied(group),
@@ -304,11 +300,10 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                 <iconify-icon icon="solar:chart-square-bold" width="14" height="14" style={{ color: "var(--primary)" }} />
                 <span className={s.sectionLabel} data-accent>5가지 기준 분석</span>
               </div>
-              {(Object.keys(result.scores) as (keyof ImageAnalysisResult["scores"])[]).map((key, i) => (
+              {CRITERION_KEYS.map((key) => (
                 <ScoreBar
                   key={key}
-                  index={i}
-                  label={SCORE_LABELS[key]}
+                  criterion={key}
                   score={result.scores[key]}
                   feedback={result.feedback[key]}
                 />
@@ -329,7 +324,13 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
             <div className={s.improvedHeader}>
               <div className={s.sectionMeta}>
                 <iconify-icon icon="solar:magic-stick-3-bold" width="14" height="14" style={{ color: "var(--primary)" }} />
-                <span className={s.sectionLabel} data-accent>한국어 개선안</span>
+                <span className={s.sectionLabel} data-accent>개선안</span>
+                {typeof result.expected_score === "number" && result.expected_score > result.total && (
+                  <span className={s.expectedScore}>
+                    <iconify-icon icon="solar:graph-up-bold" width="12" height="12" />
+                    {result.total}점 → 예상 {Math.min(Math.floor(result.expected_score / 10) * 10, 90)}점대
+                  </span>
+                )}
               </div>
               <button
                 onClick={handleCopy}
@@ -340,14 +341,35 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                   : <><iconify-icon icon="solar:copy-bold" width="13" height="13" />복사</>}
               </button>
             </div>
-            <div className={s.improvedBox}>{result.improved_prompt}</div>
-
-            {/* 영문 참고안 */}
-            <div className={s.sectionMeta} style={{ marginTop: "16px" }}>
-              <iconify-icon icon="solar:translation-bold" width="14" height="14" style={{ color: "var(--gray-400)" }} />
-              <span className={s.sectionLabel}>영문 참고안</span>
+            <div className={`${s.improvedBox} ${hasAnatomy ? s.improvedBoxAnatomy : ""}`}>
+              {hasAnatomy
+                ? promptParts.map((part, i) => (
+                    <span key={i}>
+                      {i > 0 && " "}
+                      {isCriterionKey(part.criterion) ? (
+                        <mark
+                          className={s.promptPart}
+                          style={{ background: CRITERIA[part.criterion].tint, borderColor: CRITERIA[part.criterion].color }}
+                        >
+                          {part.text}
+                        </mark>
+                      ) : (
+                        part.text
+                      )}
+                    </span>
+                  ))
+                : result.improved_prompt}
             </div>
-            <div className={s.improvedBoxKo}>{result.improved_prompt_ko}</div>
+            {hasAnatomy && legendKeys.length > 0 && (
+              <div className={s.partLegend}>
+                {legendKeys.map((k) => (
+                  <span key={k} className={s.partLegendItem}>
+                    <span className={s.partLegendDot} style={{ background: CRITERIA[k].color }} />
+                    {CRITERIA[k].label}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* 부정 프롬프트 */}
             <div className={s.negativeHeader} style={{ marginTop: "16px" }}>
@@ -375,7 +397,17 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                 <div key={i} className={s.changeItem}>
                   <div className={s.changeNum}>{i + 1}</div>
                   <div className={s.changeContent}>
-                    <span className={s.changeWhat}>{c.what}</span>
+                    <span className={s.changeWhat}>
+                      {c.what}
+                      {isCriterionKey(c.criterion) && (
+                        <span
+                          className={s.changeBadge}
+                          style={{ color: CRITERIA[c.criterion].color, background: CRITERIA[c.criterion].tint }}
+                        >
+                          {CRITERIA[c.criterion].label}
+                        </span>
+                      )}
+                    </span>
                     <span className={s.changeWhy}>{c.why}</span>
                   </div>
                 </div>
@@ -656,6 +688,36 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                       ? <><iconify-icon icon="solar:refresh-bold" width="14" height="14" />{" 비슷한 수준이에요. 팁을 참고해서 다시 도전해보세요!"}</>
                       : <><iconify-icon icon="solar:arrow-up-bold" width="14" height="14" />{" 개선 내역을 다시 읽고 도전해보세요!"}</>}
                   </div>
+
+                  {/* 항목별 채점 결과 (컴팩트) */}
+                  <div className={s.practiceScores}>
+                    <div className={s.sectionMeta}>
+                      <iconify-icon icon="solar:chart-square-bold" width="14" height="14" style={{ color: "var(--primary)" }} />
+                      <span className={s.sectionLabel} data-accent>항목별 채점 결과</span>
+                    </div>
+                    {CRITERION_KEYS.map((key) => {
+                      const c = CRITERIA[key];
+                      const after = practiceResult.scores[key];
+                      const d = after - result.scores[key];
+                      return (
+                        <div key={key} className={s.practiceScoreRow}>
+                          <span className={s.practiceScoreIcon} style={{ background: c.tint, color: c.color }}>
+                            <iconify-icon icon={c.icon} width="13" height="13" />
+                          </span>
+                          <span className={s.practiceScoreLabel}>{c.label}</span>
+                          <div className={s.practiceScoreBar} style={{ background: `${c.color}1f` }}>
+                            <div style={{ width: `${after}%`, background: c.color }} />
+                          </div>
+                          <span className={s.practiceScoreValue} style={{ color: c.color }}>
+                            {after}<small>점</small>
+                          </span>
+                          <span className={`${s.practiceScoreDelta} ${d > 0 ? s.deltaUp : d < 0 ? s.deltaDown : s.deltaSame}`}>
+                            {d > 0 ? `+${d}` : d === 0 ? "±0" : d}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ) : (
                 <div className={s.emptyHint}>
@@ -679,6 +741,26 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
           </div>
           <p className={s.tipText}>{result.tip}</p>
         </div>
+
+        <a
+          className={s.resourceTile}
+          href="https://lifeprofessor.github.io/python_edu/nano_banana_prompts.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className={s.resourceIconWrap}>
+            <iconify-icon icon="solar:book-bookmark-bold" width="18" height="18" />
+          </div>
+          <div className={s.resourceContent}>
+            <span className={s.resourceLabel}>프롬프트 참고 자료</span>
+            <strong>나노바나나 프로 활용 가이드</strong>
+            <p>카테고리별 이미지 프롬프트 예시와 작성 팁을 보고, 내 프롬프트를 더 구체적으로 다듬어보세요.</p>
+          </div>
+          <span className={s.resourceAction}>
+            열기
+            <iconify-icon icon="solar:arrow-right-up-bold" width="15" height="15" />
+          </span>
+        </a>
 
       </div>
 

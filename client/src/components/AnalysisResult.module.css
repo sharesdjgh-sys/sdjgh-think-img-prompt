@@ -291,16 +291,57 @@
   margin-bottom: 8px;
 }
 
-/* ── 영문 참고안 박스 ── */
-.improvedBoxKo {
-  background: #f8f9fa;
-  border: 1.5px solid var(--gray-300);
-  border-radius: var(--radius-sm);
-  padding: 18px 20px;
-  font-size: 15px;
-  line-height: 1.85;
-  color: var(--gray-700);
-  margin-bottom: 8px;
+/* 해부도 표시일 때는 기준별 색이 잘 보이도록 밝은 배경 */
+.improvedBoxAnatomy {
+  background: #fdfcff;
+  line-height: 2.05;
+}
+
+.promptPart {
+  color: inherit;
+  border-bottom: 2px solid;
+  border-radius: 5px 5px 2px 2px;
+  padding: 1.5px 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.partLegend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 14px;
+  margin: 2px 2px 8px;
+}
+
+.partLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+.partLegendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+/* 예상 점수 배지 */
+.expectedScore {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-left: 2px;
 }
 
 /* ── 부정 프롬프트 ── */
@@ -404,6 +445,18 @@
   font-weight: 700;
   color: var(--gray-800);
   line-height: 1.4;
+}
+
+.changeBadge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 7px;
+  vertical-align: 1px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .changeWhy {
@@ -941,6 +994,85 @@
   line-height: 1.8;
 }
 
+.resourceTile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  color: var(--gray-800);
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(91,33,182,0.08);
+  animation: fadeUp 0.3s var(--ease-out) both;
+  transition: transform 0.15s var(--ease-out), border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), background 0.15s var(--ease-out);
+}
+
+.resourceTile:hover {
+  background: #fff;
+  border-color: #a78bfa;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(91,33,182,0.16);
+}
+
+.resourceIconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #ede9fe;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resourceContent {
+  min-width: 0;
+}
+
+.resourceLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: #7c3aed;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.resourceContent strong {
+  display: block;
+  color: var(--gray-900);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.resourceContent p {
+  margin-top: 4px;
+  color: var(--gray-500);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.resourceAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 /* ── 연습 구역 ── */
 .practiceTextarea {
   width: 100%;
@@ -1070,6 +1202,79 @@
   border-radius: var(--radius-sm);
 }
 
+.practiceScores {
+  margin-top: 18px;
+}
+
+.practiceScoreRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+}
+
+.practiceScoreIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.practiceScoreLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-800);
+  width: 86px;
+  flex-shrink: 0;
+}
+
+.practiceScoreBar {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.practiceScoreBar > div {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.practiceScoreValue {
+  font-size: 15px;
+  font-weight: 800;
+  min-width: 40px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.practiceScoreValue small {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-400);
+  margin-left: 1px;
+}
+
+.practiceScoreDelta {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  min-width: 38px;
+  text-align: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaUp   { color: #059669; background: #ecfdf5; }
+.deltaDown { color: #e11d48; background: #fff1f2; }
+.deltaSame { color: var(--gray-500); background: var(--gray-200); }
+
 .compareMessageUp   { color: var(--success); background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.15); }
 .compareMessageSame { color: var(--gray-500); background: var(--gray-200); border: 1px solid var(--gray-300); }
 .compareMessageDown { color: var(--warning);  background: rgba(217,119,6,0.06); border: 1px solid rgba(217,119,6,0.15); }
@@ -1121,6 +1326,17 @@
   .imageActionGrid,
   .compareImages {
     grid-template-columns: 1fr;
+  }
+
+  .resourceTile {
+    grid-template-columns: auto 1fr;
+    align-items: flex-start;
+  }
+
+  .resourceAction {
+    grid-column: 1 / -1;
+    justify-content: center;
+    width: 100%;
   }
 
   .imagePromptHeader,

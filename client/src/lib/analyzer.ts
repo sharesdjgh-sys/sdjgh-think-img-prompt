@@ -1,24 +1,15 @@
+import type { CriterionKey } from "./criteria";
+
 export interface ImageAnalysisResult {
-  scores: {
-    subject: number;
-    style: number;
-    composition: number;
-    lighting: number;
-    negative: number;
-  };
+  scores: Record<CriterionKey, number>;
   total: number;
   overall_comment: string;
-  feedback: {
-    subject: string;
-    style: string;
-    composition: string;
-    lighting: string;
-    negative: string;
-  };
+  feedback: Record<CriterionKey, string>;
   improved_prompt: string;
-  improved_prompt_ko: string;
+  prompt_parts?: { text: string; criterion: CriterionKey | null }[];
+  expected_score?: number;
   negative_prompt: string;
-  changes: { what: string; why: string }[];
+  changes: { what: string; why: string; criterion?: CriterionKey | null }[];
   tip: string;
 }
 

@@ -521,10 +521,11 @@
 
 .promptHelperPanel {
   margin-bottom: 12px;
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--gray-300);
   border-radius: var(--radius-sm);
   background: #fff;
+  box-shadow: none;
 }
 
 .promptHelperIntro {
@@ -542,148 +543,276 @@
 }
 
 .promptHelperIntro span {
-  color: var(--gray-800);
-  font-size: 13px;
+  color: var(--gray-900);
+  font-size: 14px;
   font-weight: 800;
+  line-height: 1.35;
 }
 
 .promptHelperIntro small {
-  color: var(--gray-400);
-  font-size: 11px;
+  color: var(--gray-500);
+  font-size: 11.5px;
   font-weight: 700;
+  line-height: 1.55;
 }
 
 .addRecommendedBtn {
   flex-shrink: 0;
-  min-height: 32px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(124,58,237,0.25);
-  background: var(--primary);
-  color: #fff;
+  min-height: 36px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid #c4b5fd;
+  background: #f5f3ff;
+  color: #6d28d9;
   font-size: 12px;
   font-weight: 800;
 }
 
 .addRecommendedBtn:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: #ede9fe;
 }
 
 .addRecommendedBtn:disabled {
-  border-color: #bbf7d0;
-  background: #ecfdf5;
-  color: #047857;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: var(--gray-400);
+  box-shadow: none;
   cursor: default;
 }
 
-/* ── 보조 도구 탭 ── */
-.helperTabs {
+.helperDashboard {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--gray-200);
+  align-items: stretch;
+  gap: 5px;
+  margin: 14px 0 16px;
+  border-bottom: 1px solid var(--gray-300);
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
-.helperTab {
+.helperMetricCard {
+  --tab-color: #4f46e5;
+  --tab-bg: #eef2ff;
+  --tab-border: #c7d2fe;
   position: relative;
+  min-width: max-content;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 7px 13px;
-  border-radius: 999px;
-  border: 1px solid var(--gray-300);
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1px solid var(--tab-border);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
   background: #fff;
+  color: var(--tab-color);
+  text-align: center;
+  transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out), transform 0.15s var(--ease-out);
+}
+
+.helperMetricCard:nth-child(2) {
+  --tab-color: #0284c7;
+  --tab-bg: #e0f2fe;
+  --tab-border: #bae6fd;
+}
+
+.helperMetricCard:nth-child(3) {
+  --tab-color: #059669;
+  --tab-bg: #d1fae5;
+  --tab-border: #a7f3d0;
+}
+
+.helperMetricCard:nth-child(4) {
+  --tab-color: #d97706;
+  --tab-bg: #fef3c7;
+  --tab-border: #fde68a;
+}
+
+.helperMetricCard:nth-child(5) {
+  --tab-color: #db2777;
+  --tab-bg: #fce7f3;
+  --tab-border: #fbcfe8;
+}
+
+.helperMetricCard:hover {
+  background: var(--tab-bg);
+}
+
+.helperMetricCardActive {
+  border-color: var(--tab-color);
+  background: var(--tab-bg);
+  color: var(--tab-color);
+  box-shadow: 0 -2px 0 var(--tab-color) inset;
+}
+
+.helperMetricCardRecommended::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--tab-color);
+}
+
+.helperMetricBody {
+  min-width: 0;
+  display: inline-flex;
+}
+
+.helperMetricTitle {
+  color: currentColor;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.helperDetailCard {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.helperDetailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.helperDetailHeader > div {
+  min-width: 0;
+}
+
+.helperDetailHeader strong {
+  display: block;
+  color: var(--gray-900);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.helperDetailHeader p {
+  margin-top: 3px;
   color: var(--gray-500);
   font-size: 12px;
-  font-weight: 700;
-  transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
-}
-
-.helperTab:hover:not(.helperTabActive) {
-  border-color: rgba(124,58,237,0.3);
-  color: var(--primary);
-}
-
-.helperTabActive {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-}
-
-.helperTabDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: #f59e0b;
-  box-shadow: 0 0 0 2px rgba(245,158,11,0.25);
-}
-
-.helperGroupDesc {
-  margin-bottom: 10px;
-  color: var(--gray-400);
-  font-size: 12px;
   font-weight: 600;
+  line-height: 1.55;
 }
 
-.promptHelperChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.promptHelperChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  padding: 8px 14px;
+.helperDetailBadge {
+  flex-shrink: 0;
+  padding: 4px 8px;
   border-radius: 999px;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.promptHelperCards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.promptHelperCard {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  gap: 6px 11px;
+  padding: 13px 14px;
+  border-radius: 10px;
   border: 1px solid var(--gray-300);
   background: #fff;
   color: var(--gray-700);
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.3;
-  transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
+  text-align: left;
+  box-shadow: none;
+  transition: transform 0.15s var(--ease-out), border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), background 0.15s var(--ease-out);
 }
 
-.promptHelperChip span {
+.promptHelperCard:hover:not(:disabled) {
+  border-color: #a5b4fc;
+  background: #fafaff;
+  box-shadow: 0 6px 16px rgba(79,70,229,0.08);
+}
+
+.promptHelperCardIcon {
+  grid-row: 1 / span 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.promptHelperCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.promptHelperCardTitle {
+  color: var(--gray-900);
+  font-size: 13px;
   font-weight: 800;
-  color: var(--gray-400);
+  line-height: 1.35;
 }
 
-.promptHelperChip:hover:not(:disabled) {
-  background: var(--primary-light);
-  border-color: rgba(124,58,237,0.25);
-  color: var(--primary);
-}
-
-.promptHelperChip:hover:not(:disabled) span {
-  color: var(--primary);
-}
-
-.promptHelperChipRecommended {
-  border-color: rgba(245,158,11,0.55);
-  background: #fffbeb;
-  color: #92400e;
-}
-
-.promptHelperChipRecommended span {
-  color: #d97706;
-}
-
-.promptHelperChipApplied {
-  border-color: #bbf7d0;
+.promptHelperCardAction {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
   background: #ecfdf5;
   color: #047857;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.promptHelperCardText {
+  grid-column: 2 / -1;
+  color: var(--gray-500);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.promptHelperCardRecommended {
+  border-color: #c4b5fd;
+  background: #f8f7ff;
+}
+
+.promptHelperCardRecommended .promptHelperCardAction {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.promptHelperCardApplied {
+  border-color: #99f6e4;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
   cursor: default;
 }
 
-.promptHelperChipApplied span {
-  color: #059669;
+.promptHelperCardApplied .promptHelperCardAction {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.promptHelperCardApplied .promptHelperCardIcon {
+  background: #ccfbf1;
+  color: #0f766e;
 }
 
 .imageActionGrid {
@@ -1308,8 +1437,18 @@
   }
 
   .imageActionGrid,
-  .compareImages {
+  .compareImages,
+  .promptHelperCards {
     grid-template-columns: 1fr;
+  }
+
+  .helperDashboard {
+    margin-right: -16px;
+    padding-right: 16px;
+  }
+
+  .addRecommendedBtn {
+    width: 100%;
   }
 
   .resourceTile {

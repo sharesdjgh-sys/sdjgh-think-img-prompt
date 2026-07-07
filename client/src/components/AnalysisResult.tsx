@@ -256,6 +256,7 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
     recommendedItems: getRecommendedItems(group),
   }));
   const recommendedItemCount = recommendedGroups.reduce((sum, group) => sum + group.recommendedItems.length, 0);
+  const activeGroup = recommendedGroups[activeHelper] ?? recommendedGroups[0];
   const hasLabResult = Boolean(generatedImage || originalImage || improvedImage);
 
   return (
@@ -448,7 +449,7 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                 <div className={s.promptHelperIntro}>
                   <div>
                     <span>프롬프트 보조 도구</span>
-                    <small>칩을 누르면 해당 문장이 프롬프트에 추가돼요. 주황 점은 지금 부족한 요소예요.</small>
+                    <small>필요한 요소를 골라 프롬프트에 자연스럽게 덧붙여보세요.</small>
                   </div>
                   <button
                     type="button"
@@ -460,41 +461,62 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                   </button>
                 </div>
 
-                <div className={s.helperTabs} role="tablist">
+                <div className={s.helperDashboard} role="tablist" aria-label="프롬프트 보조 도구 카테고리">
                   {recommendedGroups.map((group, i) => (
                     <button
                       key={group.title}
                       type="button"
                       role="tab"
                       aria-selected={i === activeHelper}
-                      className={`${s.helperTab} ${i === activeHelper ? s.helperTabActive : ""}`}
+                      className={`${s.helperMetricCard} ${i === activeHelper ? s.helperMetricCardActive : ""} ${group.recommendedItems.length > 0 ? s.helperMetricCardRecommended : ""}`}
                       onClick={() => setActiveHelper(i)}
                     >
-                      {group.title}
-                      {group.recommendedItems.length > 0 && <span className={s.helperTabDot} />}
+                      <span className={s.helperMetricBody}>
+                        <span className={s.helperMetricTitle}>{group.title}</span>
+                      </span>
                     </button>
                   ))}
                 </div>
 
-                <p className={s.helperGroupDesc}>{recommendedGroups[activeHelper].desc}</p>
-                <div className={s.promptHelperChips}>
-                  {recommendedGroups[activeHelper].items.map((item) => {
+                <div className={s.helperDetailCard}>
+                  <div className={s.helperDetailHeader}>
+                    <div>
+                      <strong>{activeGroup.title}</strong>
+                      <p>{activeGroup.desc}</p>
+                    </div>
+                    {activeGroup.recommendedItems.length > 0 && (
+                      <span className={s.helperDetailBadge}>우선 추가 추천</span>
+                    )}
+                  </div>
+                  <div className={s.promptHelperCards}>
+                    {activeGroup.items.map((item) => {
                     const applied = isHelperItemApplied(item);
-                    const recommended = recommendedGroups[activeHelper].recommendedItems.includes(item);
+                    const recommended = activeGroup.recommendedItems.includes(item);
 
                     return (
                       <button
                         key={item.label}
                         type="button"
-                        className={`${s.promptHelperChip} ${recommended ? s.promptHelperChipRecommended : ""} ${applied ? s.promptHelperChipApplied : ""}`}
+                        className={`${s.promptHelperCard} ${recommended ? s.promptHelperCardRecommended : ""} ${applied ? s.promptHelperCardApplied : ""}`}
                         onClick={() => appendPromptHelper(item)}
                         disabled={applied}
                       >
-                        <span aria-hidden="true">{applied ? "✓" : "+"}</span>
-                        {item.label}
+                        <span className={s.promptHelperCardIcon}>
+                          <iconify-icon
+                            icon={activeGroup.scoreKey ? CRITERIA[activeGroup.scoreKey].icon : "solar:crop-minimalistic-bold"}
+                            width="16"
+                            height="16"
+                          />
+                        </span>
+                        <span className={s.promptHelperCardTop}>
+                          <span className={s.promptHelperCardTitle}>{item.label}</span>
+                          <span className={s.promptHelperCardAction}>{applied ? "추가됨" : recommended ? "추천" : "추가"}</span>
+                        </span>
+                        <span className={s.promptHelperCardText}>{item.sentence}</span>
                       </button>
                     );
-                  })}
+                    })}
+                  </div>
                 </div>
               </div>
 

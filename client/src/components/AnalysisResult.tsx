@@ -548,7 +548,6 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
                   <div className={s.generatedImageHeader}>
                     <div>
                       <span className={s.generatedImageLabel}>생성 결과</span>
-                      <span className={s.generatedImageModel}>{generatedImage.model}</span>
                     </div>
                     <button
                       className={s.downloadBtn}
@@ -770,7 +769,6 @@ export default function AnalysisResult({ original, result, onReset }: Props) {
             <div className={s.previewHeader}>
               <div>
                 <span className={s.previewTitle}>{previewImage.title}</span>
-                <span className={s.previewModel}>{previewImage.image.model}</span>
               </div>
               <div className={s.previewActions}>
                 <button onClick={() => downloadImage(previewImage.image, "think-prompt-preview.png")}>
